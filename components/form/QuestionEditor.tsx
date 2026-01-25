@@ -3,11 +3,16 @@
 import { Question, QuestionType } from "@/types/form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Card, CardContent } from "@/components/ui/card"
-import { Trash2, Plus, X } from "lucide-react"
+import { Trash2, Plus, X, ChevronDown } from "lucide-react"
 import { useState } from "react"
 
 interface QuestionEditorProps {
@@ -17,6 +22,19 @@ interface QuestionEditorProps {
   onAddOption?: () => void
   onDeleteOption?: (optionId: string) => void
   onUpdateOption?: (optionId: string, label: string) => void
+}
+
+const questionTypeLabels: Record<QuestionType, string> = {
+  short: "Short Answer",
+  long: "Long Answer",
+  radio: "Multiple Choice (Radio)",
+  checkbox: "Checkboxes",
+  rating: "Rating",
+}
+
+// eslint-disable-next-line react-hooks/exhaustive-deps
+function generateId(): string {
+  return Math.random().toString(36).substring(2, 9)
 }
 
 export function QuestionEditor({
@@ -39,8 +57,8 @@ export function QuestionEditor({
       !question.options
     ) {
       updates.options = [
-        { id: Math.random().toString(36).substring(2, 9), label: "Option 1" },
-        { id: Math.random().toString(36).substring(2, 9), label: "Option 2" },
+        { id: generateId(), label: "Option 1" },
+        { id: generateId(), label: "Option 2" },
       ]
     }
     
@@ -78,17 +96,24 @@ export function QuestionEditor({
           <div className="space-y-4">
             <Label className="text-sm font-medium text-foreground">Question Type</Label>
             <div className="mt-3">
-              <Select
-                value={question.type}
-                onChange={(e) => handleTypeChange(e.target.value as QuestionType)}
-                className="w-full"
-              >
-                <option value="short">Short Answer</option>
-                <option value="long">Long Answer</option>
-                <option value="radio">Multiple Choice (Radio)</option>
-                <option value="checkbox">Checkboxes</option>
-                <option value="rating">Rating</option>
-              </Select>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between">
+                    {questionTypeLabels[question.type]}
+                    <ChevronDown className="h-4 w-4 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" sideOffset={4}>
+                  {(Object.keys(questionTypeLabels) as QuestionType[]).map((type) => (
+                    <DropdownMenuItem
+                      key={type}
+                      onClick={() => handleTypeChange(type)}
+                    >
+                      {questionTypeLabels[type]}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 
@@ -120,17 +145,15 @@ export function QuestionEditor({
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label>Options</Label>
-                  {question.type !== "rating" && (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      onClick={onAddOption}
-                    >
-                      <Plus className="h-4 w-4 mr-1" />
-                      Add Option
-                    </Button>
-                  )}
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={onAddOption}
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    Add Option
+                  </Button>
                 </div>
                 <div className="space-y-2">
                   {question.options.map((option) => (
@@ -179,22 +202,18 @@ export function QuestionEditor({
                             value={option.label}
                             readOnly
                             onClick={() => {
-                              if (question.type !== "rating") {
-                                startEditingOption(option.id, option.label)
-                              }
+                              startEditingOption(option.id, option.label)
                             }}
-                            className={`flex-1 ${question.type === "rating" ? "cursor-default" : "cursor-pointer"}`}
+                            className="flex-1 cursor-pointer"
                           />
-                          {question.type !== "rating" && (
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => onDeleteOption?.(option.id)}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => onDeleteOption?.(option.id)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
                         </>
                       )}
                     </div>
