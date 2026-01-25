@@ -59,7 +59,10 @@ export function ShareButton({ schema, title, onTitleChange }: ShareButtonProps) 
       }
     } catch (error) {
       console.error("Error publishing form:", error)
-      alert(`Failed to ${publishedFormId ? 'update' : 'publish'} form. Please try again.`)
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : `Failed to ${publishedFormId ? 'update' : 'publish'} form. Please try again.`
+      alert(`Error: ${errorMessage}`)
     } finally {
       setIsPublishing(false)
     }
