@@ -103,6 +103,13 @@ export async function updateForm(id: string, title: string, schema: FormSchema) 
   return { error: null, data: data as FormData }
 }
 
+export interface FormResponse {
+  id: string
+  form_id: string
+  responses: Record<string, any>
+  created_at: string
+}
+
 export async function submitFormResponse(formId: string, responses: Record<string, any>) {
   const supabase = createServerClient()
   
@@ -121,4 +128,29 @@ export async function submitFormResponse(formId: string, responses: Record<strin
   }
 
   return { error: null, data }
+}
+
+export async function getFormResponses(formId: string) {
+  // Check if Supabase is configured
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return { 
+      error: "Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.", 
+      data: null 
+    }
+  }
+
+  const supabase = createServerClient()
+  
+  const { data, error } = await supabase
+    .from("form_responses")
+    .select("*")
+    .eq("form_id", formId)
+    .order("created_at", { ascending: false })
+
+  if (error) {
+    console.error("Error fetching form responses:", error)
+    return { error: error.message || "Failed to fetch responses.", data: null }
+  }
+
+  return { error: null, data: (data || []) as FormResponse[] }
 }

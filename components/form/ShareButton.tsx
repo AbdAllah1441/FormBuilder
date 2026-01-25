@@ -10,7 +10,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Share2, Copy, Check, Loader2, ExternalLink } from "lucide-react"
+import { Share2, Copy, Check, Loader2, ExternalLink, BarChart3 } from "lucide-react"
+import Link from "next/link"
 import { createForm, updateForm } from "@/app/actions/forms"
 import { FormSchema } from "@/types/form"
 
@@ -156,21 +157,34 @@ export function ShareButton({ schema, title, onTitleChange }: ShareButtonProps) 
                 </Button>
               </div>
             </div>
-            <Button
-              onClick={handlePublish}
-              disabled={isPublishing}
-              variant="outline"
-              className="w-full"
-            >
-              {isPublishing ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Updating...
-                </>
-              ) : (
-                "Update Form"
-              )}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={handlePublish}
+                disabled={isPublishing}
+                variant="outline"
+                className="flex-1"
+              >
+                {isPublishing ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  "Update Form"
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                asChild
+                className="shrink-0"
+                title="View responses dashboard"
+              >
+                <Link href={`/admin/${publishedFormId}`}>
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  Dashboard
+                </Link>
+              </Button>
+            </div>
           </div>
         )}
       </CardContent>
