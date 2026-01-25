@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Share2, Copy, Check, Loader2, ExternalLink, BarChart3 } from "lucide-react"
-import Link from "next/link"
 import { createForm, updateForm } from "@/app/actions/forms"
 import { FormSchema } from "@/types/form"
 
@@ -120,7 +119,7 @@ export function ShareButton({ schema, title, onTitleChange }: ShareButtonProps) 
           </Button>
         ) : (
           <div className="space-y-3">
-            <div className="p-3 bg-muted rounded-md">
+            <div className="p-3 rounded-md">
               <p className="text-sm font-semibold mb-2">Share Link:</p>
               <div className="flex items-center gap-2">
                 <Input
@@ -175,14 +174,12 @@ export function ShareButton({ schema, title, onTitleChange }: ShareButtonProps) 
               </Button>
               <Button
                 variant="outline"
-                asChild
+                onClick={() => window.open(`/admin/${publishedFormId}`, '_blank')}
                 className="shrink-0"
-                title="View responses dashboard"
+                title="View responses dashboard in new tab"
               >
-                <Link href={`/admin/${publishedFormId}`}>
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  Dashboard
-                </Link>
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Dashboard
               </Button>
             </div>
           </div>
