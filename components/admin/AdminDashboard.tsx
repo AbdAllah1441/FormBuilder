@@ -3,6 +3,7 @@
 import { FormData, FormResponse } from "@/app/actions/forms"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme/ThemeToggle"
 import { ArrowLeft, Download, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import { ResponseList } from "./ResponseList"
@@ -89,6 +90,7 @@ export function AdminDashboard({ form, responses, responsesError }: AdminDashboa
           <p className="text-muted-foreground mt-1">Admin Dashboard</p>
         </div>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <Button
             variant="outline"
             onClick={handleRefresh}

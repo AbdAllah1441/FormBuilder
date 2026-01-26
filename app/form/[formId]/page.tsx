@@ -1,5 +1,6 @@
 import { getFormById, submitFormResponse } from "@/app/actions/forms"
 import { PublicForm } from "@/components/form/PublicForm"
+import { ThemeToggle } from "@/components/theme/ThemeToggle"
 import { notFound } from "next/navigation"
 
 interface PageProps {
@@ -17,6 +18,9 @@ export default async function FormPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-background p-6 md:p-8 lg:p-12">
       <div className="max-w-2xl mx-auto">
+        <div className="flex justify-end mb-4">
+          <ThemeToggle />
+        </div>
         <PublicForm form={form} onSubmit={submitFormResponse} />
       </div>
     </div>

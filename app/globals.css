@@ -68,8 +68,31 @@
   --font-mono: var(--font-geist-mono);
 }
 
+.dark {
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --card: #0a0a0a;
+  --card-foreground: #fafafa;
+  --popover: #0a0a0a;
+  --popover-foreground: #fafafa;
+  --primary: #fafafa;
+  --primary-foreground: #0a0a0a;
+  --secondary: #262626;
+  --secondary-foreground: #fafafa;
+  --muted: #262626;
+  --muted-foreground: #a3a3a3;
+  --accent: #262626;
+  --accent-foreground: #fafafa;
+  --destructive: #dc2626;
+  --destructive-foreground: #fafafa;
+  /* Very subtle borders in dark mode */
+  --border: #262626;
+  --input: #262626;
+  --ring: #a3a3a3;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light) {
     --background: #0a0a0a;
     --foreground: #fafafa;
     --card: #0a0a0a;
@@ -86,7 +109,6 @@
     --accent-foreground: #fafafa;
     --destructive: #dc2626;
     --destructive-foreground: #fafafa;
-    /* Very subtle borders in dark mode */
     --border: #262626;
     --input: #262626;
     --ring: #a3a3a3;
@@ -157,28 +179,52 @@ html::-webkit-scrollbar-thumb:hover {
   background-clip: padding-box;
 }
 
+.dark {
+  scrollbar-color: var(--border) transparent;
+}
+
+.dark::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+}
+
+.dark::-webkit-scrollbar-thumb:hover {
+  background-color: var(--muted-foreground);
+}
+
+.dark .custom-scrollbar {
+  scrollbar-color: var(--border) transparent;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--muted-foreground);
+}
+
 @media (prefers-color-scheme: dark) {
-  html {
+  :root:not(.light) {
     scrollbar-color: var(--border) transparent;
   }
   
-  html::-webkit-scrollbar-thumb {
+  :root:not(.light)::-webkit-scrollbar-thumb {
     background-color: var(--border);
   }
   
-  html::-webkit-scrollbar-thumb:hover {
+  :root:not(.light)::-webkit-scrollbar-thumb:hover {
     background-color: var(--muted-foreground);
   }
 
-  .custom-scrollbar {
+  :root:not(.light) .custom-scrollbar {
     scrollbar-color: var(--border) transparent;
   }
   
-  .custom-scrollbar::-webkit-scrollbar-thumb {
+  :root:not(.light) .custom-scrollbar::-webkit-scrollbar-thumb {
     background-color: var(--border);
   }
   
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  :root:not(.light) .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background-color: var(--muted-foreground);
   }
 }

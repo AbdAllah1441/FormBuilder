@@ -1,85 +1,99 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Share2, Copy, Check, Loader2, ExternalLink, BarChart3 } from "lucide-react"
-import { createForm, updateForm } from "@/app/actions/forms"
-import { FormSchema } from "@/types/form"
+} from "@/components/ui/dropdown-menu";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Share2,
+  Copy,
+  Check,
+  Loader2,
+  ExternalLink,
+  BarChart3,
+} from "lucide-react";
+import { createForm, updateForm } from "@/app/actions/forms";
+import { FormSchema } from "@/types/form";
 
 interface ShareButtonProps {
-  schema: FormSchema
-  title: string
-  onTitleChange: (title: string) => void
+  schema: FormSchema;
+  title: string;
+  onTitleChange: (title: string) => void;
 }
 
-export function ShareButton({ schema, title, onTitleChange }: ShareButtonProps) {
-  const [isPublishing, setIsPublishing] = useState(false)
-  const [publishedFormId, setPublishedFormId] = useState<string | null>(null)
-  const [copied, setCopied] = useState(false)
-  const [showShareDialog, setShowShareDialog] = useState(false)
+export function ShareButton({
+  schema,
+  title,
+  onTitleChange,
+}: ShareButtonProps) {
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [publishedFormId, setPublishedFormId] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
 
   const handlePublish = async () => {
     if (!title.trim()) {
-      alert("Please enter a form title")
-      return
+      alert("Please enter a form title");
+      return;
     }
 
     if (schema.questions.length === 0) {
-      alert("Please add at least one question to your form")
-      return
+      alert("Please add at least one question to your form");
+      return;
     }
 
-    setIsPublishing(true)
+    setIsPublishing(true);
     try {
-      let result
+      let result;
       if (publishedFormId) {
         // Update existing form
-        result = await updateForm(publishedFormId, title.trim(), schema)
+        result = await updateForm(publishedFormId, title.trim(), schema);
       } else {
         // Create new form
-        result = await createForm(title.trim(), schema)
+        result = await createForm(title.trim(), schema);
       }
-      
+
       if (result.error) {
-        alert(`Error ${publishedFormId ? 'updating' : 'publishing'} form: ${result.error}`)
-        return
+        alert(
+          `Error ${publishedFormId ? "updating" : "publishing"} form: ${result.error}`,
+        );
+        return;
       }
 
       if (result.data) {
-        setPublishedFormId(result.data.id)
-        setShowShareDialog(true)
+        setPublishedFormId(result.data.id);
+        setShowShareDialog(true);
       }
     } catch (error) {
-      console.error("Error publishing form:", error)
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : `Failed to ${publishedFormId ? 'update' : 'publish'} form. Please try again.`
-      alert(`Error: ${errorMessage}`)
+      console.error("Error publishing form:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : `Failed to ${publishedFormId ? "update" : "publish"} form. Please try again.`;
+      alert(`Error: ${errorMessage}`);
     } finally {
-      setIsPublishing(false)
+      setIsPublishing(false);
     }
-  }
+  };
 
   const copyLink = () => {
-    if (!publishedFormId) return
-    
-    const url = `${window.location.origin}/form/${publishedFormId}`
-    navigator.clipboard.writeText(url)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+    if (!publishedFormId) return;
+
+    const url = `${window.location.origin}/form/${publishedFormId}`;
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const shareLink = publishedFormId
     ? `${window.location.origin}/form/${publishedFormId}`
-    : ""
+    : "";
 
   return (
     <Card className="shadow-sm border-border/50">
@@ -88,7 +102,9 @@ export function ShareButton({ schema, title, onTitleChange }: ShareButtonProps) 
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-4">
-          <label className="text-sm font-medium text-foreground">Form Title</label>
+          <label className="text-sm font-medium text-foreground">
+            Form Title
+          </label>
           <div className="mt-3">
             <Input
               value={title}
@@ -102,7 +118,9 @@ export function ShareButton({ schema, title, onTitleChange }: ShareButtonProps) 
         {!publishedFormId ? (
           <Button
             onClick={handlePublish}
-            disabled={isPublishing || !title.trim() || schema.questions.length === 0}
+            disabled={
+              isPublishing || !title.trim() || schema.questions.length === 0
+            }
             className="w-full"
           >
             {isPublishing ? (
@@ -119,14 +137,10 @@ export function ShareButton({ schema, title, onTitleChange }: ShareButtonProps) 
           </Button>
         ) : (
           <div className="space-y-3">
-            <div className="p-3 rounded-md">
-              <p className="text-sm font-semibold mb-2">Share Link:</p>
+            <div className="rounded-md">
+              <p className="text-sm font-semibold mb-4">Share Link:</p>
               <div className="flex items-center gap-2">
-                <Input
-                  value={shareLink}
-                  readOnly
-                  className="flex-1 text-sm"
-                />
+                <Input value={shareLink} readOnly className="flex-1 text-sm" />
                 <Button
                   size="sm"
                   variant="outline"
@@ -148,7 +162,7 @@ export function ShareButton({ schema, title, onTitleChange }: ShareButtonProps) 
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => window.open(shareLink, '_blank')}
+                  onClick={() => window.open(shareLink, "_blank")}
                   className="shrink-0"
                   title="Open form in new tab"
                 >
@@ -174,7 +188,9 @@ export function ShareButton({ schema, title, onTitleChange }: ShareButtonProps) 
               </Button>
               <Button
                 variant="outline"
-                onClick={() => window.open(`/admin/${publishedFormId}`, '_blank')}
+                onClick={() =>
+                  window.open(`/admin/${publishedFormId}`, "_blank")
+                }
                 className="shrink-0"
                 title="View responses dashboard in new tab"
               >
@@ -186,5 +202,5 @@ export function ShareButton({ schema, title, onTitleChange }: ShareButtonProps) 
         )}
       </CardContent>
     </Card>
-  )
+  );
 }
