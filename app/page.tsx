@@ -5,12 +5,15 @@ import { FormBuilder } from "@/components/form/FormBuilder";
 import { FormPreview } from "@/components/form/FormPreview";
 import { ShareButton } from "@/components/form/ShareButton";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { LanguageSwitcher } from "@/components/language/LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { FormSchema } from "@/types/form";
 import { formReducer, FormAction } from "@/lib/form-reducer";
 
 export default function Home() {
   const [schema, dispatch] = useReducer(formReducer, { questions: [] });
-  const [formTitle, setFormTitle] = useState("My Form");
+  const [formTitle, setFormTitle] = useState("");
+  const { t } = useLanguage();
 
   const handleAction = (action: FormAction) => {
     dispatch(action);
@@ -25,14 +28,16 @@ export default function Home() {
             <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary/10 text-primary hover:bg-primary/20">
               v1.0 Beta
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <LanguageSwitcher />
+              <ThemeToggle />
+            </div>
           </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight lg:text-7xl mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-            Form Builder
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight lg:text-7xl pb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+            {t.formBuilder}
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl lg:mx-0 mx-auto leading-relaxed">
-            Create dynamic, beautiful forms with ease. Drag, drop, and customize
-            in a few clicks.
+            {t.createForms}
           </p>
         </header>
 

@@ -14,6 +14,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card"
 import { Trash2, Plus, X, ChevronDown } from "lucide-react"
 import { useState } from "react"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface QuestionEditorProps {
   question: Question
@@ -22,14 +23,6 @@ interface QuestionEditorProps {
   onAddOption?: () => void
   onDeleteOption?: (optionId: string) => void
   onUpdateOption?: (optionId: string, label: string) => void
-}
-
-const questionTypeLabels: Record<QuestionType, string> = {
-  short: "Short Answer",
-  long: "Long Answer",
-  radio: "Multiple Choice (Radio)",
-  checkbox: "Checkboxes",
-  rating: "Rating",
 }
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,8 +38,17 @@ export function QuestionEditor({
   onDeleteOption,
   onUpdateOption,
 }: QuestionEditorProps) {
+  const { t } = useLanguage()
   const [editingOptionId, setEditingOptionId] = useState<string | null>(null)
   const [editingOptionLabel, setEditingOptionLabel] = useState("")
+
+  const questionTypeLabels: Record<QuestionType, string> = {
+    short: t.shortAnswer,
+    long: t.longAnswer,
+    radio: t.multipleChoice,
+    checkbox: t.checkboxes,
+    rating: t.rating,
+  }
 
   const handleTypeChange = (newType: QuestionType) => {
     const updates: Partial<Question> = { type: newType }
@@ -94,7 +96,7 @@ export function QuestionEditor({
         <div className="space-y-6">
           {/* Question Type Selector */}
           <div className="space-y-4">
-            <Label className="text-sm font-medium text-foreground">Question Type</Label>
+            <Label className="text-sm font-medium text-foreground">{t.questionType}</Label>
             <div className="mt-3">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -119,12 +121,12 @@ export function QuestionEditor({
 
           {/* Question Label */}
           <div className="space-y-4">
-            <Label className="text-sm font-medium text-foreground">Question Label</Label>
+            <Label className="text-sm font-medium text-foreground">{t.questionLabel}</Label>
             <div className="mt-3">
               <Input
                 value={question.label}
                 onChange={(e) => onUpdate({ label: e.target.value })}
-                placeholder="Enter question label"
+                placeholder={t.enterQuestionLabel}
                 className="w-full"
               />
             </div>
@@ -132,7 +134,7 @@ export function QuestionEditor({
 
           {/* Required Toggle */}
           <div className="flex items-center justify-between py-2">
-            <Label className="text-sm font-semibold">Required</Label>
+            <Label className="text-sm font-semibold">{t.required}</Label>
             <Switch
               checked={question.required}
               onChange={(e) => onUpdate({ required: e.target.checked })}
@@ -144,7 +146,7 @@ export function QuestionEditor({
             question.options && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label>Options</Label>
+                  <Label>{t.options}</Label>
                   <Button
                     type="button"
                     size="sm"
@@ -152,7 +154,7 @@ export function QuestionEditor({
                     onClick={onAddOption}
                   >
                     <Plus className="h-4 w-4 mr-1" />
-                    Add Option
+                    {t.addOption}
                   </Button>
                 </div>
                 <div className="space-y-2">
@@ -232,7 +234,7 @@ export function QuestionEditor({
               className="w-full bg-[#c74245] text-white hover:bg-[#FF6467]/90"
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              Delete Question
+              {t.deleteQuestion}
             </Button>
           </div>
         </div>

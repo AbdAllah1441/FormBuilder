@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 import { Question } from "@/types/form";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PublicFormProps {
   form: FormData;
@@ -14,6 +15,7 @@ interface PublicFormProps {
 }
 
 export function PublicForm({ form, onSubmit }: PublicFormProps) {
+  const { t } = useLanguage();
   const [responses, setResponses] = useState<Record<string, any>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -47,7 +49,7 @@ export function PublicForm({ form, onSubmit }: PublicFormProps) {
     e.preventDefault();
 
     if (!validateForm()) {
-      setError("Please fill in all required fields");
+      setError(t.fillRequiredFields);
       return;
     }
 
@@ -64,7 +66,7 @@ export function PublicForm({ form, onSubmit }: PublicFormProps) {
 
       setSubmitted(true);
     } catch (err) {
-      setError("Failed to submit form. Please try again.");
+      setError(t.formSubmitted);
       console.error("Error submitting form:", err);
     } finally {
       setIsSubmitting(false);
@@ -79,9 +81,9 @@ export function PublicForm({ form, onSubmit }: PublicFormProps) {
             <div className="flex justify-center">
               <CheckCircle2 className="h-16 w-16 text-primary" />
             </div>
-            <h2 className="text-2xl font-bold">Thank You!</h2>
+            <h2 className="text-2xl font-bold">{t.thankYou}</h2>
             <p className="text-muted-foreground">
-              Your form has been submitted successfully.
+              {t.formSubmitted}
             </p>
           </div>
         </CardContent>
@@ -134,14 +136,14 @@ export function PublicForm({ form, onSubmit }: PublicFormProps) {
           className="px-8"
           size="lg"
         >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Submitting...
-            </>
-          ) : (
-            "Submit"
-          )}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  {t.submitting}
+                </>
+              ) : (
+                t.submitForm
+              )}
         </Button>
       </div>
     </form>

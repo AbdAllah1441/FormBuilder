@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { createForm, updateForm } from "@/app/actions/forms";
 import { FormSchema } from "@/types/form";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ShareButtonProps {
   schema: FormSchema;
@@ -36,15 +37,16 @@ export function ShareButton({
   const [publishedFormId, setPublishedFormId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
+  const { t } = useLanguage();
 
   const handlePublish = async () => {
     if (!title.trim()) {
-      alert("Please enter a form title");
+      alert(t.enterFormTitle);
       return;
     }
 
     if (schema.questions.length === 0) {
-      alert("Please add at least one question to your form");
+      alert(t.noQuestionsYet);
       return;
     }
 
@@ -98,18 +100,18 @@ export function ShareButton({
   return (
     <Card className="shadow-sm border-border/50">
       <CardHeader className="pb-4">
-        <CardTitle className="text-xl font-semibold">Publish & Share</CardTitle>
+        <CardTitle className="text-xl font-semibold">{t.publishShare}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-4">
           <label className="text-sm font-medium text-foreground">
-            Form Title
+            {t.formTitle}
           </label>
           <div className="mt-3">
             <Input
               value={title}
               onChange={(e) => onTitleChange(e.target.value)}
-              placeholder="Enter form title"
+              placeholder={t.enterFormTitle}
               className="w-full"
             />
           </div>
@@ -126,19 +128,19 @@ export function ShareButton({
             {isPublishing ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Publishing...
+                {t.publishing}
               </>
             ) : (
               <>
-                <Share2 className="h-4 w-4 mr-2" />
-                Publish & Share
+                <Share2 className="h-4 w-4 me-2" />
+                {t.publishShareBtn}
               </>
             )}
           </Button>
         ) : (
           <div className="space-y-3">
             <div className="rounded-md">
-              <p className="text-sm font-semibold mb-4">Share Link:</p>
+              <p className="text-sm font-semibold mb-4">{t.shareLink}</p>
               <div className="flex items-center gap-2">
                 <Input value={shareLink} readOnly className="flex-1 text-sm" />
                 <Button
@@ -150,12 +152,12 @@ export function ShareButton({
                   {copied ? (
                     <>
                       <Check className="h-4 w-4 mr-1" />
-                      Copied!
+                      {t.copied}
                     </>
                   ) : (
                     <>
                       <Copy className="h-4 w-4 mr-1" />
-                      Copy
+                      {t.copy}
                     </>
                   )}
                 </Button>
@@ -177,14 +179,14 @@ export function ShareButton({
                 variant="outline"
                 className="flex-1"
               >
-                {isPublishing ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Updating...
-                  </>
-                ) : (
-                  "Update Form"
-                )}
+              {isPublishing ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  {t.updating}
+                </>
+              ) : (
+                t.updateForm
+              )}
               </Button>
               <Button
                 variant="outline"
@@ -195,7 +197,7 @@ export function ShareButton({
                 title="View responses dashboard in new tab"
               >
                 <BarChart3 className="h-4 w-4 mr-2" />
-                Dashboard
+                {t.adminDashboard}
               </Button>
             </div>
           </div>

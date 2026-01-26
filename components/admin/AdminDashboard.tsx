@@ -4,10 +4,12 @@ import { FormData, FormResponse } from "@/app/actions/forms"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme/ThemeToggle"
+import { LanguageSwitcher } from "@/components/language/LanguageSwitcher"
 import { ArrowLeft, Download, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import { ResponseList } from "./ResponseList"
 import { useState } from "react"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface AdminDashboardProps {
   form: FormData
@@ -16,6 +18,7 @@ interface AdminDashboardProps {
 }
 
 export function AdminDashboard({ form, responses, responsesError }: AdminDashboardProps) {
+  const { t } = useLanguage()
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const handleRefresh = async () => {
@@ -82,14 +85,15 @@ export function AdminDashboard({ form, responses, responsesError }: AdminDashboa
             <Button variant="ghost" size="sm" asChild>
               <Link href="/">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Builder
+                {t.backToBuilder}
               </Link>
             </Button>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold">{form.title}</h1>
-          <p className="text-muted-foreground mt-1">Admin Dashboard</p>
+          <p className="text-muted-foreground mt-1">{t.adminDashboard}</p>
         </div>
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <ThemeToggle />
           <Button
             variant="outline"
@@ -97,12 +101,12 @@ export function AdminDashboard({ form, responses, responsesError }: AdminDashboa
             disabled={isRefreshing}
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
-            Refresh
+            {t.refresh}
           </Button>
           {responses.length > 0 && (
             <Button variant="outline" onClick={exportToCSV}>
               <Download className="h-4 w-4 mr-2" />
-              Export CSV
+              {t.exportCSV}
             </Button>
           )}
         </div>
@@ -112,13 +116,13 @@ export function AdminDashboard({ form, responses, responsesError }: AdminDashboa
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Total Responses</CardDescription>
+            <CardDescription>{t.totalResponses}</CardDescription>
             <CardTitle className="text-3xl">{responses.length}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Form Created</CardDescription>
+            <CardDescription>{t.formCreated}</CardDescription>
             <CardTitle className="text-lg font-normal">
               {new Date(form.created_at).toLocaleDateString()}
             </CardTitle>
@@ -126,7 +130,7 @@ export function AdminDashboard({ form, responses, responsesError }: AdminDashboa
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Questions</CardDescription>
+            <CardDescription>{t.questions}</CardDescription>
             <CardTitle className="text-3xl">{form.schema.questions.length}</CardTitle>
           </CardHeader>
         </Card>
@@ -135,21 +139,21 @@ export function AdminDashboard({ form, responses, responsesError }: AdminDashboa
       {/* Responses */}
       <Card>
         <CardHeader>
-          <CardTitle>Form Responses</CardTitle>
+          <CardTitle>{t.formResponses}</CardTitle>
           <CardDescription>
-            View all responses submitted to your form
+            {t.viewResponses}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {responsesError ? (
             <div className="text-center py-8 text-destructive">
-              <p>Error loading responses: {responsesError}</p>
+              <p>{t.errorLoadingResponses}: {responsesError}</p>
             </div>
           ) : responses.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              <p className="text-lg mb-2">No responses yet</p>
+              <p className="text-lg mb-2">{t.noResponses}</p>
               <p className="text-sm">
-                Share your form link to start collecting responses
+                {t.shareFormLink}
               </p>
             </div>
           ) : (

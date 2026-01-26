@@ -1,5 +1,6 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface LongAnswerInputProps {
   label: string;
@@ -14,6 +15,8 @@ export function LongAnswerInput({
   value = "",
   onChange,
 }: LongAnswerInputProps) {
+  const { t } = useLanguage();
+  
   return (
     <div className="space-y-4">
       <Label className="text-sm font-medium text-foreground">
@@ -24,7 +27,7 @@ export function LongAnswerInput({
         <Textarea
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
-          placeholder="Enter your answer"
+          placeholder={t.enterYourAnswer}
           rows={4}
           className="w-full"
         />

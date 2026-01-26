@@ -34,7 +34,7 @@ export function formReducer(state: FormSchema, action: FormAction): FormSchema {
       const newQuestion: Question = {
         id: generateId(),
         type: action.questionType,
-        label: "New Question",
+        label: "",
         required: false,
         ...(options ? { options } : {}),
       }

@@ -3,6 +3,7 @@
 import { FormData, FormResponse } from "@/app/actions/forms"
 import { Card, CardContent } from "@/components/ui/card"
 import { Question } from "@/types/form"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface ResponseListProps {
   form: FormData
@@ -35,6 +36,8 @@ function formatResponseValue(question: Question, value: any): string {
 }
 
 export function ResponseList({ form, responses }: ResponseListProps) {
+  const { t } = useLanguage()
+  
   return (
     <div className="space-y-4">
       {responses.map((response, index) => (
@@ -44,10 +47,10 @@ export function ResponseList({ form, responses }: ResponseListProps) {
               <div className="flex items-center justify-between pb-3 border-b border-border/30">
                 <div>
                   <p className="text-sm font-semibold text-muted-foreground">
-                    Response #{responses.length - index}
+                    {t.response} #{responses.length - index}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Submitted {new Date(response.created_at).toLocaleString()}
+                    {t.submitted} {new Date(response.created_at).toLocaleString()}
                   </p>
                 </div>
               </div>

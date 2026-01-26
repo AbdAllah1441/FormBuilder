@@ -21,6 +21,7 @@ import { Question } from "@/types/form"
 import { QuestionEditor } from "./QuestionEditor"
 import { GripVertical } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface QuestionListProps {
   questions: Question[]
@@ -68,13 +69,13 @@ function SortableQuestionItem({
         {...attributes}
         {...listeners}
         className={cn(
-          "absolute left-0 top-6 cursor-grab active:cursor-grabbing p-2 text-muted-foreground hover:text-foreground transition-colors",
+          "absolute left-0 rtl:left-auto rtl:right-0 top-6 cursor-grab active:cursor-grabbing p-2 text-muted-foreground hover:text-foreground transition-colors",
           isDragging && "cursor-grabbing"
         )}
       >
         <GripVertical className="h-5 w-5" />
       </div>
-      <div className="pl-10">
+      <div className="pl-10 rtl:pl-0 rtl:pr-10">
         <QuestionEditor
           question={question}
           onUpdate={onUpdate}
@@ -97,6 +98,7 @@ export function QuestionList({
   onDeleteOption,
   onUpdateOption,
 }: QuestionListProps) {
+  const { t } = useLanguage()
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -125,7 +127,7 @@ export function QuestionList({
         <div className="space-y-4">
           {questions.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              No questions yet. Add a question to get started!
+              {t.noQuestionsYet}
             </div>
           ) : (
             questions.map((question) => (

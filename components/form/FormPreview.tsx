@@ -3,22 +3,25 @@
 import { FormSchema } from "@/types/form"
 import { QuestionPreview } from "./QuestionPreview"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface FormPreviewProps {
   schema: FormSchema
 }
 
 export function FormPreview({ schema }: FormPreviewProps) {
+  const { t } = useLanguage()
+
   return (
     <Card className="shadow-sm border-border/50">
       <CardHeader className="pb-4">
-        <CardTitle className="text-2xl font-semibold">Form Preview</CardTitle>
+        <CardTitle className="text-2xl font-semibold">{t.formPreview}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
           {schema.questions.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              No questions to preview. Add questions in the builder!
+              {t.noQuestionsPreview}
             </div>
           ) : (
             schema.questions.map((question) => (

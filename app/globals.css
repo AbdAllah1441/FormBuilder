@@ -123,6 +123,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* RTL Support - Tailwind handles most RTL automatically with dir attribute */
+[dir="rtl"] {
+  direction: rtl;
+}
+
 /* Custom Scrollbar Styling - Applied to whole app */
 html {
   scrollbar-width: thin;

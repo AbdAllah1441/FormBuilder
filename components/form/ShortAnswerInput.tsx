@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ShortAnswerInputProps {
   label: string;
@@ -14,6 +15,8 @@ export function ShortAnswerInput({
   value = "",
   onChange,
 }: ShortAnswerInputProps) {
+  const { t } = useLanguage();
+  
   return (
     <div className="space-y-4">
       <Label className="text-sm font-medium text-foreground">
@@ -25,7 +28,7 @@ export function ShortAnswerInput({
           type="text"
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
-          placeholder="Enter your answer"
+          placeholder={t.enterYourAnswer}
           className="w-full"
         />
       </div>

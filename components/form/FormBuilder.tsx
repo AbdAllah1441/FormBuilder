@@ -12,21 +12,23 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plus } from "lucide-react"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface FormBuilderProps {
   schema: FormSchema
   dispatch: (action: FormAction) => void
 }
 
-const questionTypes: { value: QuestionType; label: string }[] = [
-  { value: "short", label: "Short Answer" },
-  { value: "long", label: "Long Answer" },
-  { value: "radio", label: "Multiple Choice (Radio)" },
-  { value: "checkbox", label: "Checkboxes" },
-  { value: "rating", label: "Rating" },
-]
-
 export function FormBuilder({ schema, dispatch }: FormBuilderProps) {
+  const { t } = useLanguage()
+
+  const questionTypes: { value: QuestionType; label: string }[] = [
+    { value: "short", label: t.shortAnswer },
+    { value: "long", label: t.longAnswer },
+    { value: "radio", label: t.multipleChoice },
+    { value: "checkbox", label: t.checkboxes },
+    { value: "rating", label: t.rating },
+  ]
   const handleAddQuestion = (type: QuestionType) => {
     dispatch({ type: "ADD_QUESTION", questionType: type })
   }
@@ -59,12 +61,12 @@ export function FormBuilder({ schema, dispatch }: FormBuilderProps) {
     <Card className="shadow-sm border-border/50">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-2xl font-semibold">Form Builder</CardTitle>
+          <CardTitle className="text-2xl font-semibold">{t.formBuilder}</CardTitle>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
-                Add Question
+                {t.addQuestion}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
