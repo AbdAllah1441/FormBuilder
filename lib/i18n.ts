@@ -72,6 +72,27 @@ export const translations = {
     formNotFoundDesc:
       "The form you're looking for doesn't exist or has been removed.",
     goToFormBuilder: "Go to Form Builder",
+
+    // Auth
+    login: "Login",
+    loginDescription: "Sign in to your account to continue",
+    signUp: "Sign Up",
+    signUpDescription: "Create an account to get started",
+    email: "Email",
+    enterEmail: "Enter your email",
+    password: "Password",
+    enterPassword: "Enter your password",
+    confirmPassword: "Confirm Password",
+    confirmYourPassword: "Confirm your password",
+    loggingIn: "Logging in...",
+    creatingAccount: "Creating account...",
+    noAccount: "Don't have an account?",
+    haveAccount: "Already have an account?",
+    logout: "Logout",
+    checkEmail: "Check your email",
+    confirmationSent: "We've sent you a confirmation link. Please check your email to verify your account.",
+    backToLogin: "Back to Login",
+    passwordsDontMatch: "Passwords don't match",
   },
   ar: {
     // Main page
@@ -140,6 +161,27 @@ export const translations = {
     formNotFound: "النموذج غير موجود",
     formNotFoundDesc: "النموذج الذي تبحث عنه غير موجود أو تم حذفه.",
     goToFormBuilder: "الذهاب إلى منشئ النماذج",
+
+    // Auth
+    login: "تسجيل الدخول",
+    loginDescription: "سجل دخولك للمتابعة",
+    signUp: "إنشاء حساب",
+    signUpDescription: "أنشئ حساباً للبدء",
+    email: "البريد الإلكتروني",
+    enterEmail: "أدخل بريدك الإلكتروني",
+    password: "كلمة المرور",
+    enterPassword: "أدخل كلمة المرور",
+    confirmPassword: "تأكيد كلمة المرور",
+    confirmYourPassword: "أكد كلمة المرور",
+    loggingIn: "جاري تسجيل الدخول...",
+    creatingAccount: "جاري إنشاء الحساب...",
+    noAccount: "ليس لديك حساب؟",
+    haveAccount: "لديك حساب بالفعل؟",
+    logout: "تسجيل الخروج",
+    checkEmail: "تحقق من بريدك الإلكتروني",
+    confirmationSent: "لقد أرسلنا لك رابط التأكيد. يرجى التحقق من بريدك الإلكتروني لتفعيل حسابك.",
+    backToLogin: "العودة لتسجيل الدخول",
+    passwordsDontMatch: "كلمات المرور غير متطابقة",
   },
 } as const;
 

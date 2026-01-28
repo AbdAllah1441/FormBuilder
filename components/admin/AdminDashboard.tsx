@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme/ThemeToggle"
 import { LanguageSwitcher } from "@/components/language/LanguageSwitcher"
+import { UserMenu } from "@/components/auth/UserMenu"
 import { ArrowLeft, Download, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import { ResponseList } from "./ResponseList"
@@ -95,6 +96,7 @@ export function AdminDashboard({ form, responses, responsesError }: AdminDashboa
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeToggle />
+          <UserMenu />
           <Button
             variant="outline"
             onClick={handleRefresh}

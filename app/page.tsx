@@ -6,6 +6,7 @@ import { FormPreview } from "@/components/form/FormPreview";
 import { ShareButton } from "@/components/form/ShareButton";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { LanguageSwitcher } from "@/components/language/LanguageSwitcher";
+import { UserMenu } from "@/components/auth/UserMenu";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { FormSchema } from "@/types/form";
 import { formReducer, FormAction } from "@/lib/form-reducer";
@@ -31,6 +32,7 @@ export default function Home() {
             <div className="flex items-center gap-2">
               <LanguageSwitcher />
               <ThemeToggle />
+              <UserMenu />
             </div>
           </div>
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight lg:text-7xl pb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
