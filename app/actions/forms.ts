@@ -20,6 +20,10 @@ export interface FormResponse {
   created_at: string;
 }
 
+export interface FormListItem extends FormData {
+  response_count: number;
+}
+
 function toFormData(form: Form): FormData {
   return {
     id: form.id,
@@ -182,9 +186,16 @@ export async function getUserForms() {
     const forms = await prisma.form.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: "desc" },
+      include: { _count: { select: { responses: true } } },
     });
 
-    return { error: null, data: forms.map(toFormData) };
+    return {
+      error: null,
+      data: forms.map((form) => ({
+        ...toFormData(form),
+        response_count: form._count.responses,
+      })),
+    };
   } catch (error) {
     console.error("Error fetching user forms:", error);
     return { error: "Failed to fetch forms", data: null };

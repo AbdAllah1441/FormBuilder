@@ -84,9 +84,9 @@ export function AdminDashboard({ form, responses, responsesError }: AdminDashboa
         <div>
           <div className="flex items-center gap-4 mb-2">
             <Button variant="ghost" size="sm" asChild>
-              <Link href="/">
+              <Link href="/admin">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                {t.backToBuilder}
+                {t.myForms}
               </Link>
             </Button>
           </div>

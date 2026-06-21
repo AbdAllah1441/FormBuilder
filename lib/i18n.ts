@@ -52,6 +52,13 @@ export const translations = {
 
     // Admin dashboard
     adminDashboard: "Admin Dashboard",
+    myForms: "My Forms",
+    manageForms: "View and manage all your published forms",
+    noForms: "No forms yet",
+    createFirstForm: "Create your first form to get started",
+    createNewForm: "Create New Form",
+    viewDashboard: "View Dashboard",
+    openPublicForm: "Open public form",
     backToBuilder: "Back to Builder",
     totalResponses: "Total Responses",
     formCreated: "Form Created",
@@ -142,6 +149,13 @@ export const translations = {
 
     // Admin dashboard
     adminDashboard: "لوحة التحكم",
+    myForms: "نماذجي",
+    manageForms: "عرض وإدارة جميع النماذج المنشورة",
+    noForms: "لا توجد نماذج بعد",
+    createFirstForm: "أنشئ نموذجك الأول للبدء",
+    createNewForm: "إنشاء نموذج جديد",
+    viewDashboard: "عرض لوحة التحكم",
+    openPublicForm: "فتح النموذج العام",
     backToBuilder: "العودة إلى المنشئ",
     totalResponses: "إجمالي الردود",
     formCreated: "تاريخ الإنشاء",
