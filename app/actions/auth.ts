@@ -1,6 +1,12 @@
 "use server";
 
-import { createServerClient } from "@/lib/supabase/server";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
+import {
+  createSession,
+  deleteSession,
+  getSessionUser,
+} from "@/lib/auth/session";
 
 export async function signUp(formData: FormData) {
   const email = formData.get("email") as string;
@@ -14,18 +20,19 @@ export async function signUp(formData: FormData) {
     return { error: "Password must be at least 6 characters" };
   }
 
-  const supabase = await createServerClient();
-
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-  });
-
-  if (error) {
-    return { error: error.message };
+  const existingUser = await prisma.user.findUnique({ where: { email } });
+  if (existingUser) {
+    return { error: "An account with this email already exists" };
   }
 
-  return { error: null, message: "Check your email for confirmation link" };
+  const hashedPassword = await bcrypt.hash(password, 12);
+  const user = await prisma.user.create({
+    data: { email, password: hashedPassword },
+  });
+
+  await createSession(user.id);
+
+  return { error: null, success: true };
 }
 
 export async function signIn(formData: FormData) {
@@ -36,30 +43,26 @@ export async function signIn(formData: FormData) {
     return { error: "Email and password are required", success: false };
   }
 
-  const supabase = await createServerClient();
-
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) {
-    return { error: error.message, success: false };
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) {
+    return { error: "Invalid email or password", success: false };
   }
+
+  const validPassword = await bcrypt.compare(password, user.password);
+  if (!validPassword) {
+    return { error: "Invalid email or password", success: false };
+  }
+
+  await createSession(user.id);
 
   return { error: null, success: true };
 }
 
 export async function signOut() {
-  const supabase = await createServerClient();
-  await supabase.auth.signOut();
+  await deleteSession();
   return { success: true };
 }
 
 export async function getUser() {
-  const supabase = await createServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
+  return getSessionUser();
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { signUp } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,13 +10,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { LanguageSwitcher } from "@/components/language/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Loader2, Mail, Lock, CheckCircle2 } from "lucide-react";
+import { Loader2, Mail, Lock } from "lucide-react";
 import Link from "next/link";
 
 export default function SignUpPage() {
   const { t } = useLanguage();
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,39 +38,12 @@ export default function SignUpPage() {
 
     if (result?.error) {
       setError(result.error);
-    } else {
-      setSuccess(true);
+      setLoading(false);
+    } else if (result?.success) {
+      router.push("/");
+      router.refresh();
     }
-    setLoading(false);
   };
-
-  if (success) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-6">
-        <div className="absolute top-6 right-6 flex items-center gap-2">
-          <LanguageSwitcher />
-          <ThemeToggle />
-        </div>
-
-        <Card className="w-full max-w-md shadow-lg">
-          <CardContent className="pt-12 pb-12">
-            <div className="text-center space-y-4">
-              <div className="flex justify-center">
-                <CheckCircle2 className="h-16 w-16 text-primary" />
-              </div>
-              <h2 className="text-2xl font-bold">{t.checkEmail}</h2>
-              <p className="text-muted-foreground">
-                {t.confirmationSent}
-              </p>
-              <Link href="/login">
-                <Button className="mt-4">{t.backToLogin}</Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6">

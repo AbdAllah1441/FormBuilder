@@ -1,7 +1,9 @@
 "use server";
 
-import { createServerClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/auth/session";
 import { FormSchema } from "@/types/form";
+import type { Form, FormResponse as PrismaFormResponse, Prisma } from "@/lib/generated/prisma/client";
 
 export interface FormData {
   id: string;
@@ -11,246 +13,180 @@ export interface FormData {
   user_id?: string;
 }
 
+export interface FormResponse {
+  id: string;
+  form_id: string;
+  responses: Record<string, unknown>;
+  created_at: string;
+}
+
+function toFormData(form: Form): FormData {
+  return {
+    id: form.id,
+    title: form.title,
+    schema: form.schema as unknown as FormSchema,
+    created_at: form.createdAt.toISOString(),
+    user_id: form.userId ?? undefined,
+  };
+}
+
+function toFormResponse(data: PrismaFormResponse): FormResponse {
+  return {
+    id: data.id,
+    form_id: data.formId,
+    responses: data.responses as Record<string, unknown>,
+    created_at: data.createdAt.toISOString(),
+  };
+}
+
 export async function createForm(title: string, schema: FormSchema) {
-  // Check if Supabase is configured
-  if (
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ) {
-    return {
-      error:
-        "Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.",
-      data: null,
-    };
-  }
-
-  const supabase = await createServerClient();
-
-  // Get current user
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getSessionUser();
   if (!user) {
     return { error: "You must be logged in to create a form", data: null };
   }
 
-  const { data, error } = await supabase
-    .from("forms")
-    .insert({
-      title,
-      schema,
-      user_id: user.id,
-    })
-    .select()
-    .single();
+  try {
+    const form = await prisma.form.create({
+      data: {
+        title,
+        schema: schema as unknown as Prisma.InputJsonValue,
+        userId: user.id,
+      },
+    });
 
-  if (error) {
+    return { error: null, data: toFormData(form) };
+  } catch (error) {
     console.error("Error creating form:", error);
-    return {
-      error:
-        error.message || "Failed to create form. Please check your Supabase configuration.",
-      data: null,
-    };
+    return { error: "Failed to create form", data: null };
   }
-
-  if (!data) {
-    return { error: "No data returned from Supabase", data: null };
-  }
-
-  return { error: null, data: data as FormData };
 }
 
 export async function getFormById(id: string) {
-  const supabase = await createServerClient();
+  try {
+    const form = await prisma.form.findUnique({ where: { id } });
+    if (!form) {
+      return { error: "Form not found", data: null };
+    }
 
-  const { data, error } = await supabase
-    .from("forms")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error) {
+    return { error: null, data: toFormData(form) };
+  } catch (error) {
     console.error("Error fetching form:", error);
-    return { error: error.message, data: null };
+    return { error: "Failed to fetch form", data: null };
   }
-
-  return { error: null, data: data as FormData };
 }
 
 export async function updateForm(id: string, title: string, schema: FormSchema) {
-  // Check if Supabase is configured
-  if (
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ) {
-    return {
-      error:
-        "Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.",
-      data: null,
-    };
-  }
-
-  const supabase = await createServerClient();
-
-  // Get current user
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getSessionUser();
   if (!user) {
     return { error: "You must be logged in to update a form", data: null };
   }
 
-  // Check if user owns this form
-  const { data: existingForm } = await supabase
-    .from("forms")
-    .select("user_id")
-    .eq("id", id)
-    .single();
+  const existingForm = await prisma.form.findUnique({
+    where: { id },
+    select: { userId: true },
+  });
 
-  if (existingForm?.user_id && existingForm.user_id !== user.id) {
-    return { error: "You don't have permission to update this form", data: null };
+  if (!existingForm) {
+    return { error: "Form not found", data: null };
   }
 
-  // First, try to update
-  const { error: updateError } = await supabase
-    .from("forms")
-    .update({
-      title,
-      schema,
-    })
-    .eq("id", id);
-
-  if (updateError) {
-    console.error("Error updating form:", updateError);
+  if (existingForm.userId && existingForm.userId !== user.id) {
     return {
-      error:
-        updateError.message ||
-        "Failed to update form. Please check your Supabase configuration.",
+      error: "You don't have permission to update this form",
       data: null,
     };
   }
 
-  // Then fetch the updated form
-  const { data, error } = await supabase
-    .from("forms")
-    .select("*")
-    .eq("id", id)
-    .single();
+  try {
+    const form = await prisma.form.update({
+      where: { id },
+      data: { title, schema: schema as unknown as Prisma.InputJsonValue },
+    });
 
-  if (error) {
-    console.error("Error fetching updated form:", error);
-    return { error: error.message || "Failed to fetch updated form.", data: null };
+    return { error: null, data: toFormData(form) };
+  } catch (error) {
+    console.error("Error updating form:", error);
+    return { error: "Failed to update form", data: null };
   }
-
-  if (!data) {
-    return { error: "No data returned from Supabase", data: null };
-  }
-
-  return { error: null, data: data as FormData };
-}
-
-export interface FormResponse {
-  id: string;
-  form_id: string;
-  responses: Record<string, any>;
-  created_at: string;
 }
 
 export async function submitFormResponse(
   formId: string,
-  responses: Record<string, any>
+  responses: Record<string, unknown>,
 ) {
-  const supabase = await createServerClient();
+  try {
+    const form = await prisma.form.findUnique({ where: { id: formId } });
+    if (!form) {
+      return { error: "Form not found", data: null };
+    }
 
-  const { data, error } = await supabase
-    .from("form_responses")
-    .insert({
-      form_id: formId,
-      responses,
-    })
-    .select()
-    .single();
+    const response = await prisma.formResponse.create({
+      data: {
+        formId,
+        responses: responses as unknown as Prisma.InputJsonValue,
+      },
+    });
 
-  if (error) {
+    return { error: null, data: toFormResponse(response) };
+  } catch (error) {
     console.error("Error submitting form:", error);
-    return { error: error.message, data: null };
+    return { error: "Failed to submit form", data: null };
   }
-
-  return { error: null, data };
 }
 
 export async function getFormResponses(formId: string) {
-  // Check if Supabase is configured
-  if (
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ) {
-    return {
-      error:
-        "Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.",
-      data: null,
-    };
-  }
-
-  const supabase = await createServerClient();
-
-  // Get current user
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getSessionUser();
   if (!user) {
     return { error: "You must be logged in to view responses", data: null };
   }
 
-  // Check if user owns this form
-  const { data: form } = await supabase
-    .from("forms")
-    .select("user_id")
-    .eq("id", formId)
-    .single();
+  const form = await prisma.form.findUnique({
+    where: { id: formId },
+    select: { userId: true },
+  });
 
-  if (form?.user_id && form.user_id !== user.id) {
-    return { error: "You don't have permission to view these responses", data: null };
+  if (!form) {
+    return { error: "Form not found", data: null };
   }
 
-  const { data, error } = await supabase
-    .from("form_responses")
-    .select("*")
-    .eq("form_id", formId)
-    .order("created_at", { ascending: false });
+  if (form.userId && form.userId !== user.id) {
+    return {
+      error: "You don't have permission to view these responses",
+      data: null,
+    };
+  }
 
-  if (error) {
+  try {
+    const responses = await prisma.formResponse.findMany({
+      where: { formId },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return {
+      error: null,
+      data: responses.map(toFormResponse),
+    };
+  } catch (error) {
     console.error("Error fetching form responses:", error);
-    return { error: error.message || "Failed to fetch responses.", data: null };
+    return { error: "Failed to fetch responses", data: null };
   }
-
-  return { error: null, data: (data || []) as FormResponse[] };
 }
 
 export async function getUserForms() {
-  const supabase = await createServerClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getSessionUser();
   if (!user) {
     return { error: "You must be logged in", data: null };
   }
 
-  const { data, error } = await supabase
-    .from("forms")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
+  try {
+    const forms = await prisma.form.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+    });
 
-  if (error) {
+    return { error: null, data: forms.map(toFormData) };
+  } catch (error) {
     console.error("Error fetching user forms:", error);
-    return { error: error.message, data: null };
+    return { error: "Failed to fetch forms", data: null };
   }
-
-  return { error: null, data: (data || []) as FormData[] };
 }

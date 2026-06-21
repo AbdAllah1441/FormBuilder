@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  forms     Form[]
+  sessions  Session[]
+
+  @@index([email])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model Form {
+  id        String         @id @default(cuid())
+  title     String
+  schema    Json
+  userId    String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  user      User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  responses FormResponse[]
+
+  @@index([userId])
+}
+
+model FormResponse {
+  id        String   @id @default(cuid())
+  formId    String
+  responses Json
+  createdAt DateTime @default(now())
+  form      Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@index([formId])
+  @@index([createdAt])
+}
