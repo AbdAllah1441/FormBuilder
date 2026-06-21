@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { signOut } from "@/app/actions/auth";
@@ -12,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { User, LogOut } from "lucide-react";
+import { BarChart3, LogOut, User } from "lucide-react";
 
 export function UserMenu() {
   const { user } = useAuth();
@@ -39,6 +40,12 @@ export function UserMenu() {
           <p className="text-sm font-medium">{user.email}</p>
         </div>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/admin">
+            <BarChart3 className="h-4 w-4 me-2" />
+            {t.myForms}
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleSignOut}
           className="text-destructive focus:text-destructive"
