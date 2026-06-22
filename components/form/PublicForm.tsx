@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 import { Question } from "@/types/form";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { isFileAttachment } from "@/lib/file-attachment";
 
 interface PublicFormProps {
   form: FormData;
@@ -36,7 +37,8 @@ export function PublicForm({ form, onSubmit }: PublicFormProps) {
           response === undefined ||
           response === null ||
           response === "" ||
-          (Array.isArray(response) && response.length === 0)
+          (Array.isArray(response) && response.length === 0) ||
+          (question.type === "attachment" && !isFileAttachment(response))
         ) {
           return false;
         }
@@ -161,9 +163,6 @@ function PublicQuestionPreview({
   value,
   onChange,
 }: PublicQuestionPreviewProps) {
-  // Create a modified question with the value for preview
-  const questionWithValue = { ...question };
-
   switch (question.type) {
     case "short":
       return (
@@ -212,6 +211,15 @@ function PublicQuestionPreview({
           onChange={onChange}
         />
       );
+    case "attachment":
+      return (
+        <AttachmentInput
+          label={question.label}
+          required={question.required}
+          value={value}
+          onChange={onChange}
+        />
+      );
     default:
       return null;
   }
@@ -223,3 +231,4 @@ import { LongAnswerInput } from "./LongAnswerInput";
 import { RadioInput } from "./RadioInput";
 import { CheckboxInput } from "./CheckboxInput";
 import { RatingInput } from "./RatingInput";
+import { AttachmentInput } from "./AttachmentInput";

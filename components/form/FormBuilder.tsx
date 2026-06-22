@@ -28,6 +28,7 @@ export function FormBuilder({ schema, dispatch }: FormBuilderProps) {
     { value: "radio", label: t.multipleChoice },
     { value: "checkbox", label: t.checkboxes },
     { value: "rating", label: t.rating },
+    { value: "attachment", label: t.attachment },
   ]
   const handleAddQuestion = (type: QuestionType) => {
     dispatch({ type: "ADD_QUESTION", questionType: type })

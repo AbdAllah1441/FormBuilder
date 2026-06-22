@@ -2,8 +2,15 @@
 
 import { FormData, FormResponse } from "@/app/actions/forms"
 import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Question } from "@/types/form"
 import { useLanguage } from "@/contexts/LanguageContext"
+import {
+  downloadAttachment,
+  formatFileSize,
+  isFileAttachment,
+} from "@/lib/file-attachment"
+import { Download } from "lucide-react"
 
 interface ResponseListProps {
   form: FormData
@@ -29,6 +36,11 @@ function formatResponseValue(question: Question, value: any): string {
       }
       return String(value)
     case "rating":
+      return String(value)
+    case "attachment":
+      if (isFileAttachment(value)) {
+        return `${value.name} (${formatFileSize(value.size)})`
+      }
       return String(value)
     default:
       return String(value)
@@ -58,6 +70,9 @@ export function ResponseList({ form, responses }: ResponseListProps) {
               <div className="space-y-4">
                 {form.schema.questions.map((question) => {
                   const answer = response.responses[question.id]
+                  const isAttachment =
+                    question.type === "attachment" && isFileAttachment(answer)
+
                   return (
                     <div key={question.id} className="space-y-2">
                       <p className="text-sm font-semibold text-foreground">
@@ -66,9 +81,22 @@ export function ResponseList({ form, responses }: ResponseListProps) {
                           <span className="text-destructive ml-1">*</span>
                         )}
                       </p>
-                      <p className="text-sm text-muted-foreground pl-2 border-l-2 border-border/50">
-                        {formatResponseValue(question, answer)}
-                      </p>
+                      <div className="flex items-center gap-3 pl-2 border-l-2 border-border/50">
+                        <p className="text-sm text-muted-foreground">
+                          {formatResponseValue(question, answer)}
+                        </p>
+                        {isAttachment && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => downloadAttachment(answer)}
+                          >
+                            <Download className="h-4 w-4 mr-1" />
+                            {t.downloadFile}
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   )
                 })}

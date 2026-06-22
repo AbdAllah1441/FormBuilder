@@ -11,6 +11,8 @@ import Link from "next/link"
 import { ResponseList } from "./ResponseList"
 import { useState } from "react"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { isFileAttachment } from "@/lib/file-attachment"
+import { Question } from "@/types/form"
 
 interface AdminDashboardProps {
   form: FormData
@@ -25,6 +27,20 @@ export function AdminDashboard({ form, responses, responsesError }: AdminDashboa
   const handleRefresh = async () => {
     setIsRefreshing(true)
     window.location.reload()
+  }
+
+  const formatCsvValue = (question: Question | undefined, value: unknown) => {
+    if (value === null || value === undefined) return ""
+
+    if (question?.type === "attachment" && isFileAttachment(value)) {
+      return value.name
+    }
+
+    if (Array.isArray(value)) {
+      return value.join(", ")
+    }
+
+    return value.toString()
   }
 
   const exportToCSV = () => {
@@ -52,11 +68,8 @@ export function AdminDashboard({ form, responses, responsesError }: AdminDashboa
         response.id,
         new Date(response.created_at).toLocaleString(),
         ...Array.from(allQuestionIds).map((id) => {
-          const value = response.responses[id]
-          if (Array.isArray(value)) {
-            return value.join(", ")
-          }
-          return value?.toString() || ""
+          const question = form.schema.questions.find((q) => q.id === id)
+          return formatCsvValue(question, response.responses[id])
         }),
       ]
       rows.push(row)

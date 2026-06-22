@@ -27,6 +27,7 @@ export const translations = {
     multipleChoice: "Radio Buttons",
     checkboxes: "Checkboxes",
     rating: "Rating",
+    attachment: "File Attachment",
 
     // Question editor
     questionType: "Question Type",
@@ -42,6 +43,13 @@ export const translations = {
       "No questions to preview. Add questions in the builder!",
     noQuestionsYet: "No questions yet. Add a question to get started!",
     enterYourAnswer: "Enter your answer",
+    chooseFile: "Choose a file",
+    replaceFile: "Replace file",
+    removeFile: "Remove file",
+    maxFileSize: "Max size:",
+    fileTooLarge: "File is too large. Please choose a smaller file.",
+    fileReadError: "Failed to read the file. Please try again.",
+    downloadFile: "Download",
 
     // Public form
     submitForm: "Submit",
@@ -125,6 +133,7 @@ export const translations = {
     multipleChoice: "إجابة واحدة من متعدد",
     checkboxes: "عدة إجابات من متعدد",
     rating: "تقييم",
+    attachment: "مرفق ملف",
 
     // Question editor
     questionType: "نوع السؤال",
@@ -139,6 +148,13 @@ export const translations = {
     noQuestionsPreview: "لا توجد أسئلة للمعاينة. أضف أسئلة في المنشئ!",
     noQuestionsYet: "لا توجد أسئلة بعد. أضف سؤالاً للبدء!",
     enterYourAnswer: "أدخل إجابتك",
+    chooseFile: "اختر ملفاً",
+    replaceFile: "استبدال الملف",
+    removeFile: "إزالة الملف",
+    maxFileSize: "الحد الأقصى:",
+    fileTooLarge: "الملف كبير جداً. يرجى اختيار ملف أصغر.",
+    fileReadError: "فشل قراءة الملف. يرجى المحاولة مرة أخرى.",
+    downloadFile: "تحميل",
 
     // Public form
     submitForm: "إرسال",

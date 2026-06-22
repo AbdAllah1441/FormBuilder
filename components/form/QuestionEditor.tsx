@@ -48,6 +48,7 @@ export function QuestionEditor({
     radio: t.multipleChoice,
     checkbox: t.checkboxes,
     rating: t.rating,
+    attachment: t.attachment,
   }
 
   const handleTypeChange = (newType: QuestionType) => {
@@ -65,7 +66,7 @@ export function QuestionEditor({
     }
     
     // Remove options for types that don't need them
-    if (newType === "short" || newType === "long") {
+    if (newType === "short" || newType === "long" || newType === "attachment") {
       updates.options = undefined
     }
 

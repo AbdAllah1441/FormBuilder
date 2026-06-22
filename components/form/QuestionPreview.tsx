@@ -6,18 +6,22 @@ import { LongAnswerInput } from "./LongAnswerInput"
 import { RadioInput } from "./RadioInput"
 import { CheckboxInput } from "./CheckboxInput"
 import { RatingInput } from "./RatingInput"
+import { AttachmentInput } from "./AttachmentInput"
 import { useState } from "react"
+import { FileAttachment } from "@/types/form"
 
 interface QuestionPreviewProps {
   question: Question
 }
 
 export function QuestionPreview({ question }: QuestionPreviewProps) {
-  const [value, setValue] = useState<string | string[] | number | undefined>(
-    undefined
-  )
+  const [value, setValue] = useState<
+    string | string[] | number | FileAttachment | undefined
+  >(undefined)
 
-  const handleChange = (newValue: string | string[] | number) => {
+  const handleChange = (
+    newValue: string | string[] | number | FileAttachment | undefined
+  ) => {
     setValue(newValue)
   }
 
@@ -67,6 +71,15 @@ export function QuestionPreview({ question }: QuestionPreviewProps) {
           required={question.required}
           value={value as number}
           onChange={handleChange as (value: number) => void}
+        />
+      )
+    case "attachment":
+      return (
+        <AttachmentInput
+          label={question.label}
+          required={question.required}
+          value={value as FileAttachment}
+          onChange={handleChange as (value: FileAttachment | undefined) => void}
         />
       )
     default:
